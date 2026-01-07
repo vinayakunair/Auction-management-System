@@ -1,0 +1,42 @@
+<h1>Online Auction System</h1>
+
+<div class="ticker">
+  <span class="ticker-text">
+    📢 Welcome to the Online Auction Management System — Experience real-time bidding, secure transactions, instant notifications, and a transparent auction process across electronics, vehicles, real estate, collectibles, and more!
+  </span>
+</div>
+
+
+
+<style>
+
+*{
+    margin: 0;
+}
+
+.ticker {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  background: #fff0f0;
+  border-top: 2px solid red;
+  border-bottom: 2px solid red;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: red;
+  display: inline-block;
+  animation: scroll 15s linear infinite;
+}
+
+@keyframes scroll {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+</style>

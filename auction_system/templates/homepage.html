@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <h1>Online Auction Management System</h1>
+    <p>
+        A secure, transparent, and real-time platform for online auctions.
+        Buy, sell, and bid with confidence using role-based access control
+        and automated auction management.
+    </p>
+
+    <div class="hero-actions">
+        <a href="{% url 'buyer_register' %}" class="btn primary">Start Bidding</a>
+        <a href="{% url 'seller_register' %}" class="btn secondary">Become a Seller</a>
+    </div>
+</section>
+
+<section class="search-section">
+    <input type="text" placeholder="Search auctions by item, category, or keyword">
+</section>
+
+<section class="categories">
+    <h2>Auction Categories</h2>
+    <div class="category-grid">
+        <div class="category-card">Electronics</div>
+        <div class="category-card">Automobiles</div>
+        <div class="category-card">Real Estate</div>
+        <div class="category-card">Art & Collectibles</div>
+        <div class="category-card">Assets & Others</div>
+    </div>
+</section>
+
+<section class="active-auctions">
+    <h2>Active Auctions</h2>
+    <div class="auction-grid">
+        <div class="auction-card">
+            <h3>Sample Item 1</h3>
+            <p>Current Bid: ₹10,000</p>
+            <p>Time Left: 2h 30m</p>
+        </div>
+
+        <div class="auction-card">
+            <h3>Sample Item 2</h3>
+            <p>Current Bid: ₹25,000</p>
+            <p>Time Left: 5h 10m</p>
+        </div>
+
+        <div class="auction-card">
+            <h3>Sample Item 3</h3>
+            <p>Current Bid: ₹7,500</p>
+            <p>Time Left: 1h 45m</p>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <h2>Platform Features</h2>
+    <div class="feature-grid">
+        <div class="feature-card">Real-time bidding & proxy bidding</div>
+        <div class="feature-card">Role-based access (Buyer / Seller / Admin)</div>
+        <div class="feature-card">Secure payment processing</div>
+        <div class="feature-card">Transparent bidding history</div>
+        <div class="feature-card">Auction scheduling & time tracking</div>
+        <div class="feature-card">Email & notification alerts</div>
+    </div>
+</section>
+
+
+
+{% endblock %}

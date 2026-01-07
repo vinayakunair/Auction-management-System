@@ -1,0 +1,36 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body{
+    height: 100%;
+}
+
+.main{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo{
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+}
+
+.navbar{
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    padding: 10px 10px;
+    background-color: #ffffffaf;
+    width: 100%;
+    z-index: 1000;
+}
+
+.content{
+    flex: 1;
+}
