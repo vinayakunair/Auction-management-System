@@ -10,33 +10,24 @@ from .models import CustomUser
 
 
 
-def homepage(request):
-    return render(request,'homepage.html')
+from auctions.models import AuctionItem
 
-def buyer_register(request):
+def homepage(request):
+    auctions = AuctionItem.objects.filter(is_active=True)
+    return render(request, 'homepage.html', {'auctions': auctions})
+
+
+def register(request):
     if request.method == 'POST':
         form = RegUser(request.POST)
         if form.is_valid():
             form.save()
             return redirect(loginpage)
     else:
-        form = RegUser()  
+        form = RegUser()
 
     return render(request, 'register.html', {'form': form})
 
-
-def seller_register(request):
-    if request.method == 'POST':
-        form = RegUser(request.POST)
-        if form.is_valid():
-            seller = form.save(commit=False)
-            seller.role = 'seller'
-            seller.save()
-            return redirect(loginpage)
-    else:
-        form = RegUser()   
-
-    return render(request, 'register.html', {'form': form})
 
 
 

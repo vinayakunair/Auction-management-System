@@ -8,7 +8,7 @@
 {% block content %}
 
 <section class="hero">
-    <h1>Online Auction Management System</h1>
+    <h1>AMS Auction Management System</h1>
     <p>
         A secure, transparent, and real-time platform for online auctions.
         Buy, sell, and bid with confidence using role-based access control
@@ -16,8 +16,8 @@
     </p>
 
     <div class="hero-actions">
-        <a href="{% url 'buyer_register' %}" class="btn primary">Start Bidding</a>
-        <a href="{% url 'seller_register' %}" class="btn secondary">Become a Seller</a>
+        <a href="{% url 'register' %}" class="btn primary">Start Bidding</a>
+        <a href="{% url 'register' %}" class="btn secondary">Become a Seller</a>
     </div>
 </section>
 
@@ -27,50 +27,80 @@
 
 <section class="categories">
     <h2>Auction Categories</h2>
+
     <div class="category-grid">
-        <div class="category-card">Electronics</div>
-        <div class="category-card">Automobiles</div>
-        <div class="category-card">Real Estate</div>
-        <div class="category-card">Art & Collectibles</div>
-        <div class="category-card">Assets & Others</div>
+
+        <div class="category-card">
+            <img src="{% static 'images/electronics.jpg' %}" alt="Electronics">
+            <span>Electronics</span>
+        </div>
+
+        <div class="category-card">
+            <img src="{% static 'images/automobiles.avif' %}" alt="Automobiles">
+            <span>Automobiles</span>
+        </div>
+
+        <div class="category-card">
+            <img src="{% static 'images/realestate.jpg' %}" alt="Real Estate">
+            <span>Real Estate</span>
+        </div>
+
+        <div class="category-card">
+            <img src="{% static 'images/art.jpg' %}" alt="Art & Collectibles">
+            <span>Art & Collectibles</span>
+        </div>
+
+        <div class="category-card">
+            <img src="{% static 'images/assets.jpg' %}" alt="Assets & Others">
+            <span>Assets & Others</span>
+        </div>
+
     </div>
 </section>
+
 
 <section class="active-auctions">
     <h2>Active Auctions</h2>
     <div class="auction-grid">
-        <div class="auction-card">
-            <h3>Sample Item 1</h3>
-            <p>Current Bid: ₹10,000</p>
-            <p>Time Left: 2h 30m</p>
-        </div>
 
-        <div class="auction-card">
-            <h3>Sample Item 2</h3>
-            <p>Current Bid: ₹25,000</p>
-            <p>Time Left: 5h 10m</p>
-        </div>
+        {% for auction in auctions %}
+        <a href="{% url 'auction_detail' auction.id %}" class="auction-card">
 
-        <div class="auction-card">
-            <h3>Sample Item 3</h3>
-            <p>Current Bid: ₹7,500</p>
-            <p>Time Left: 1h 45m</p>
-        </div>
+            {% if auction.image %}
+                <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+            {% endif %}
+
+            <h3>{{ auction.title }}</h3>
+            <p>Base Price: ₹{{ auction.base_price }}</p>
+
+            {% with highest=auction.highest_bid %}
+                {% if highest %}
+                    <p>Highest Bid: ₹{{ highest.amount }}</p>
+                {% else %}
+                    <p>No bids yet</p>
+                {% endif %}
+            {% endwith %}
+
+            <p>Ends at: {{ auction.end_time }}</p>
+            <p>Status: {{ auction.status }}</p>
+
+        </a>
+        {% empty %}
+        <p>No active auctions available.</p>
+        {% endfor %}
+
     </div>
 </section>
 
 <section class="features">
     <h2>Platform Features</h2>
     <div class="feature-grid">
-        <div class="feature-card">Real-time bidding & proxy bidding</div>
-        <div class="feature-card">Role-based access (Buyer / Seller / Admin)</div>
+        <div class="feature-card">Real-time bidding</div>
         <div class="feature-card">Secure payment processing</div>
         <div class="feature-card">Transparent bidding history</div>
         <div class="feature-card">Auction scheduling & time tracking</div>
         <div class="feature-card">Email & notification alerts</div>
     </div>
 </section>
-
-
 
 {% endblock %}

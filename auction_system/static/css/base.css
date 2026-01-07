@@ -26,7 +26,7 @@ html, body{
     display: flex;
     align-items: center;
     padding: 10px 10px;
-    background-color: #ffffffaf;
+    background-color:white;
     width: 100%;
     z-index: 1000;
 }

@@ -27,7 +27,12 @@
 
         <div class="navbar-center"></div>
 
-        <div class="navbar-right"></div>
+        <div class="navbar-right">
+            {% if user.is_authenticated %}
+            <a href="{% url 'seller_dashboard' %}">My Auctions</a>
+            {% endif %}
+
+        </div>
     </header>
 
     <div class="content">

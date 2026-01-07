@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ auction.title }}</h2>
+
+{% if auction.image %}
+<img src="{{ auction.image.url }}" width="300">
+{% endif %}
+
+<p>{{ auction.description }}</p>
+<p>Base Price: ₹{{ auction.base_price }}</p>
+<p>Time Left: {{ auction.time_left }}</p>
+<p>Status: <span id="auction-status">{{ auction.status }}</span></p>
+
+
+
+
+<span class="countdown"
+      data-end="{{ auction.end_time|date:'Y-m-d H:i:s' }}">
+</span>
+
+
+{% if auction.winner %}
+<p>Winner: {{ auction.winner.username }}</p>
+{% endif %}
+
+<h3>Bids</h3>
+<ul>
+    {% for bid in bids %}
+        <li>{{ bid.bidder.username }} → ₹{{ bid.amount }}</li>
+    {% empty %}
+        <li>No bids yet</li>
+    {% endfor %}
+</ul>
+
+
+<script>
+setInterval(() => {
+    location.reload();
+}, 5000);
+</script>
+
+
+
+
+
+
+
+{% endblock %}

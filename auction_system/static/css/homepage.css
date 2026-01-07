@@ -121,3 +121,69 @@
     background: #f9fafb;
     border-left: 4px solid #dc2626;
 }
+
+.auction-card img{
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.auction-card h3{
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.auction-card p{
+    font-size: 15px;
+    margin: 6px 0;
+    color: #374151;
+}
+
+.auction-card{
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auction-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+
+
+.category-card{
+    background: #ffffff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.category-card img{
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.category-card span{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+.category-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+.feature-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
