@@ -1,67 +1,108 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{ auction.title }}</h2>
 
-{% if auction.image %}
-<img src="{{ auction.image.url }}" width="300">
-{% endif %}
+<div class="auction-card">
 
-<p>{{ auction.description }}</p>
-<p>Base Price: ₹{{ auction.base_price }}</p>
-<p>Time Left: {{ auction.time_left }}</p>
-<p>Status: <span id="auction-status">{{ auction.status }}</span></p>
+    <h2>{{ auction.title }}</h2>
 
+    {% if auction.image %}
+        <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+    {% endif %}
 
+    <p>{{ auction.description }}</p>
+    <p>Base Price: ₹{{ auction.base_price }}</p>
+    <p>Time Left: {{ auction.time_left }}</p>
+    <p>Status: <span id="auction-status">{{ auction.status }}</span></p>
 
+    <span class="countdown"
+          data-end="{{ auction.end_time|date:'Y-m-d H:i:s' }}">
+    </span>
 
-<span class="countdown"
-      data-end="{{ auction.end_time|date:'Y-m-d H:i:s' }}">
-</span>
+    {% if auction.winner %}
+        <p>Winner: {{ auction.winner.username }}</p>
+    {% endif %}
 
+    <h3>Bids</h3>
+    <ul>
+        {% for bid in bids %}
+            <li>{{ bid.bidder.username }} → ₹{{ bid.amount }}</li>
+        {% empty %}
+            <li>No bids yet</li>
+        {% endfor %}
+    </ul>
 
-{% if auction.winner %}
-<p>Winner: {{ auction.winner.username }}</p>
-{% endif %}
+    {% if form %}
+        <h3>Place a Bid</h3>
 
-<h3>Bids</h3>
-<ul>
-    {% for bid in bids %}
-        <li>{{ bid.bidder.username }} → ₹{{ bid.amount }}</li>
-    {% empty %}
-        <li>No bids yet</li>
-    {% endfor %}
-</ul>
+        <form method="post">
+            {% csrf_token %}
 
-{% if form %}
-<h3>Place a Bid</h3>
+            <div class="box">
+                {{ form.amount.label }}
+                {{ form.amount }}
+            </div>
 
-<form method="post">
-    {% csrf_token %}
-    
-    <div class="box">
-        {{ form.amount.label }}
-        {{ form.amount }}
-    </div>
+            <div class="box">
+                <button type="submit">Place Bid</button>
+            </div>
+        </form>
+    {% endif %}
 
-    <div class="box">
-        <button type="submit">Place Bid</button>
-    </div>
-</form>
-{% endif %}
+</div>
 
+<style>
+.auction-card {
+    max-width: 700px;
+    background: #ffffff;
+    padding: 20px;
+    margin: 30px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-align: center;
+}
 
+.auction-card img {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 8px;
+    margin: 0 auto 15px;
+    display: block;
+}
+
+.box {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.box button {
+    background-color: #7b2525;
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.auction-card ul {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.auction-card li {
+    list-style: none;
+}
+
+</style>
 
 <script>
 setInterval(() => {
     location.reload();
 }, 10000);
 </script>
-
-
-
-
-
-
 
 {% endblock %}

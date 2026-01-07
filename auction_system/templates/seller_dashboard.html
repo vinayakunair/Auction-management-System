@@ -1,32 +1,103 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Seller Dashboard</h2>
 
-<a href="{% url 'create_auction' %}">Create New Auction</a>
+<div class="seller-dashboard">
 
-<ul>
-{% for auction in auctions %}
-    <li>
+    <h2>Seller Dashboard</h2>
 
-        {% if auction.image %}
-            <img src="{{ auction.image.url }}" alt="{{ auction.title }}" width="150">
-        {% endif %}
+    <a class="create-btn" href="{% url 'create_auction' %}">
+        Create New Auction
+    </a>
 
-        <br>
+    <ul class="auction-list">
+    {% for auction in auctions %}
+        <li class="auction-item">
 
-        {{ auction.title }} |
-        {{ auction.status }} |
-        {{ auction.time_left }}
+            {% if auction.image %}
+                <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+            {% endif %}
 
-        <a href="{% url 'edit_auction' auction.id %}">Edit</a>
-        <a href="{% url 'delete_auction' auction.id %}">Delete</a>
+            <div class="auction-info">
+                {{ auction.title }} |
+                {{ auction.status }} |
+                {{ auction.time_left }}
+            </div>
 
-    </li>
-{% empty %}
-    <li>No auctions</li>
-{% endfor %}
-</ul>
+            <div class="auction-actions">
+                <a href="{% url 'edit_auction' auction.id %}">Edit</a>
+                <a href="{% url 'delete_auction' auction.id %}">Delete</a>
+            </div>
+
+        </li>
+    {% empty %}
+        <li class="empty">No auctions</li>
+    {% endfor %}
+    </ul>
+
+</div>
+
+
+
+
+<style>
+
+    .seller-dashboard h2 {
+    margin-bottom: 16px;
+    font-size: 24px;
+}
+
+.seller-dashboard .create-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 8px 14px;
+    background: #222;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.seller-dashboard .auction-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.seller-dashboard .auction-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fafafa;
+    font-size: 14px;
+}
+
+.seller-dashboard img {
+    width: 150px;
+    border-radius: 4px;
+}
+
+.seller-dashboard .auction-actions a {
+    margin-right: 10px;
+    text-decoration: none;
+    font-size: 13px;
+    color: #0066cc;
+}
+
+.seller-dashboard .auction-actions a:hover {
+    text-decoration: underline;
+}
+
+.seller-dashboard .empty {
+    text-align: center;
+    color: #777;
+}
+
+</style>
 
 {% endblock %}
 

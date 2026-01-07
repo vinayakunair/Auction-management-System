@@ -187,3 +187,72 @@
     transform: translateY(-4px);
     box-shadow: 0 8px 18px rgba(0,0,0,0.12);
 }
+
+@media (max-width: 768px) {
+
+    .hero {
+        padding: 60px 20px;
+    }
+
+    .hero h1 {
+        font-size: 30px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    .hero-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 280px;
+        padding: 12px 20px;
+    }
+
+    .search-section {
+        padding: 30px 20px;
+    }
+
+    .search-section input {
+        width: 100%;
+        font-size: 15px;
+    }
+
+    .categories,
+    .active-auctions,
+    .features {
+        padding: 40px 20px;
+    }
+
+    .auction-card img {
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .hero h1 {
+        font-size: 26px;
+    }
+
+    .hero p {
+        font-size: 15px;
+    }
+
+    .category-card span {
+        font-size: 16px;
+    }
+
+    .auction-card h3 {
+        font-size: 18px;
+    }
+
+    .auction-card p {
+        font-size: 14px;
+    }
+}
