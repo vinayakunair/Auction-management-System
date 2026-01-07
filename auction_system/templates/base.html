@@ -28,10 +28,25 @@
         <div class="navbar-center"></div>
 
         <div class="navbar-right">
+           
+        
             {% if user.is_authenticated %}
-            <a href="{% url 'seller_dashboard' %}">My Auctions</a>
-            {% endif %}
+                <div class="dropdown">
+                    <a class="right-item dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <span class="material-symbols-outlined">account_circle</span>Account
+                    </a>
 
+                    <ul class="dropdown-menu">
+                        <li><span class="dropdown-item-text">User: {{ request.user }}</span></li>
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
+                        <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
+                        <li><a class="dropdown-item" href="{% url 'seller_dashboard' %}">Seller Dashboard</a></li>
+                    </ul>
+                </div>
+                {% endif %}
         </div>
     </header>
 

@@ -18,3 +18,15 @@ class RegUser(UserCreationForm):
             'password2',
         ]
 
+class SellerRegisterForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'password1', 'password2']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = 'seller'
+        if commit:
+            user.save()
+        return user
+

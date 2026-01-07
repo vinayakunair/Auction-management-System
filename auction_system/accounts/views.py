@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .forms import RegUser
+from .forms import RegUser,SellerRegisterForm
 
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
@@ -28,6 +28,18 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
+def seller_register(request):
+    if request.method == 'POST':
+        form = SellerRegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = SellerRegisterForm()
+
+    return render(request, 'seller_register.html', {'form': form})
+
+
 
 
 
@@ -54,6 +66,10 @@ def loginpage(request):
 
 
 
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
 
 

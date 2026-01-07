@@ -28,9 +28,34 @@ html, body{
     padding: 10px 10px;
     background-color:white;
     width: 100%;
-    z-index: 1000;
+      z-index: 9999;
 }
 
 .content{
     flex: 1;
+}
+
+.dropdown-menu{
+  z-index: 9999;
+}
+
+.nabar-right {
+     padding-right: 70px;
+}
+ 
+
+.dropdown{
+     padding-right: 70px;
+     text-decoration: none;
+}
+
+.dropdown a {
+    text-decoration: none !important;
+    color: black;
+}
+
+.dropdown .right-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
