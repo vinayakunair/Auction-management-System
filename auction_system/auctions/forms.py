@@ -1,5 +1,6 @@
 from django import forms
-from .models import Bid,AuctionItem
+from .models import Bid, AuctionItem
+
 
 class BidForm(forms.ModelForm):
     class Meta:
@@ -21,3 +22,12 @@ class AuctionItemForm(forms.ModelForm):
             'end_time',
             'is_active'
         ]
+
+        widgets = {
+            'start_time': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'}
+            ),
+            'end_time': forms.DateTimeInput(
+                attrs={'type': 'datetime-local'}
+            ),
+        }

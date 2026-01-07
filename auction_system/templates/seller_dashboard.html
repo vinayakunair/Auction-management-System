@@ -8,11 +8,20 @@
 <ul>
 {% for auction in auctions %}
     <li>
+
+        {% if auction.image %}
+            <img src="{{ auction.image.url }}" alt="{{ auction.title }}" width="150">
+        {% endif %}
+
+        <br>
+
         {{ auction.title }} |
         {{ auction.status }} |
         {{ auction.time_left }}
+
         <a href="{% url 'edit_auction' auction.id %}">Edit</a>
         <a href="{% url 'delete_auction' auction.id %}">Delete</a>
+
     </li>
 {% empty %}
     <li>No auctions</li>
@@ -20,3 +29,4 @@
 </ul>
 
 {% endblock %}
+

@@ -33,11 +33,29 @@
     {% endfor %}
 </ul>
 
+{% if form %}
+<h3>Place a Bid</h3>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="box">
+        {{ form.amount.label }}
+        {{ form.amount }}
+    </div>
+
+    <div class="box">
+        <button type="submit">Place Bid</button>
+    </div>
+</form>
+{% endif %}
+
+
 
 <script>
 setInterval(() => {
     location.reload();
-}, 5000);
+}, 10000);
 </script>
 
 
