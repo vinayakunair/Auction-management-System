@@ -5,26 +5,41 @@
             <form method="post">
                 {% csrf_token %}
             <div class="boxes">
-                <div class="box">
-                    {{ form.username.label }}
-                    {{ form.username }}
+             <div class="box">
+                {{ form.username.label }}
+                {{ form.username }}
+                <div style="color:red; font-size:14px;">
+                    {{ form.username.errors }}
                 </div>
+            </div>
 
-                <div class="box">
-                    {{ form.email.label }}
-                    {{ form.email }}
+            <div class="box">
+                {{ form.email.label }}
+                {{ form.email }}
+                <div style="color:red; font-size:14px;">
+                    {{ form.email.errors }}
                 </div>
+            </div>
 
 
-                <div class="box">
-                    {{ form.password1.label }}
+               <div class="box">
                     {{ form.password1 }}
+                    <small style="color:red; font-size:14px;">
+                        {{ form.password1.help_text }}
+                    </small>
+                    <div style="color:red; font-size:14px;">
+                        {{ form.password1.errors }}
+                    </div>
                 </div>
 
                 <div class="box">
-                    {{ form.password2.label }}
                     {{ form.password2 }}
+                    <div style="color:red; font-size:14px;">
+                        {{ form.password2.errors }}
+                    </div>
                 </div>
+
+
                 <div class="box">
                 <input type="submit" value="Register">
                 </div>
@@ -37,11 +52,7 @@
 
                 
             </div>
-                  {% if form.errors %}
-                    <div style="color: rgb(23, 19, 209); font-size: 18px; margin-bottom: 20px;">
-                        {{ form.errors }}
-                    </div>
-                    {% endif %}
+                  
             </form>
     </div>    
 

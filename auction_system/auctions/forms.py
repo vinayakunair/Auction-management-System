@@ -1,11 +1,17 @@
 from django import forms
 from .models import Bid, AuctionItem
+from django import forms
+from django.utils import timezone
+from .models import Bid, AuctionItem
+
 
 
 class BidForm(forms.ModelForm):
     class Meta:
         model = Bid
         fields = ['amount']
+
+
 
 
 class AuctionItemForm(forms.ModelForm):
@@ -25,9 +31,15 @@ class AuctionItemForm(forms.ModelForm):
 
         widgets = {
             'start_time': forms.DateTimeInput(
-                attrs={'type': 'datetime-local'}
+                attrs={
+                    'type': 'datetime-local',
+                    'min': timezone.now().strftime('%Y-%m-%dT%H:%M')
+                }
             ),
             'end_time': forms.DateTimeInput(
-                attrs={'type': 'datetime-local'}
+                attrs={
+                    'type': 'datetime-local',
+                    'min': timezone.now().strftime('%Y-%m-%dT%H:%M')
+                }
             ),
         }

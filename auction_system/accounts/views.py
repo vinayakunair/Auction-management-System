@@ -5,16 +5,53 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 
 from .models import CustomUser
+from django.utils import timezone
+
+from .decorators import admin_required
+from auctions.models import AuctionItem, Bid
+from django.contrib.auth import get_user_model
+
 
 # Create your views here.
 
+from django.shortcuts import get_object_or_404
+
+@admin_required
+def approve_auction(request, auction_id):
+    auction = get_object_or_404(AuctionItem, id=auction_id)
+    auction.is_active = True
+    auction.save()
+    return redirect('admin_dashboard')
 
 
-from auctions.models import AuctionItem
+@admin_required
+def disable_auction(request, auction_id):
+    auction = get_object_or_404(AuctionItem, id=auction_id)
+    auction.is_active = False
+    auction.save()
+    return redirect('admin_dashboard')
+
+
+
+
 
 def homepage(request):
-    auctions = AuctionItem.objects.filter(is_active=True)
-    return render(request, 'homepage.html', {'auctions': auctions})
+    now = timezone.now()
+
+    active_auctions = AuctionItem.objects.filter(
+        is_active=True,
+        start_time__lte=now,
+        end_time__gte=now
+    )
+
+    ended_auctions = AuctionItem.objects.filter(
+        end_time__lt=now
+    )
+
+    return render(request, 'homepage.html', {
+        'active_auctions': active_auctions,
+        'ended_auctions': ended_auctions,
+    })
 
 
 def register(request):
@@ -69,8 +106,22 @@ def loginpage(request):
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('/')
 
 
 
 
+
+
+User = get_user_model()
+
+@admin_required
+def admin_dashboard(request):
+    context = {
+        'total_users': User.objects.count(),
+        'total_auctions': AuctionItem.objects.count(),
+        'active_auctions': AuctionItem.objects.filter(is_active=True).count(),
+        'total_bids': Bid.objects.count(),
+        'auctions': AuctionItem.objects.all()[:5],
+    }
+    return render(request, 'admin/dashboard.html', context)

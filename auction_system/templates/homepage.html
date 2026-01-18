@@ -58,12 +58,11 @@
     </div>
 </section>
 
-
 <section class="active-auctions" id="active-auctions">
     <h2>Active Auctions</h2>
     <div class="auction-grid">
 
-        {% for auction in auctions %}
+        {% for auction in active_auctions %}
         <a href="{% url 'auction_detail' auction.id %}" class="auction-card">
 
             {% if auction.image %}
@@ -91,6 +90,45 @@
 
     </div>
 </section>
+
+<section class="ended-auctions">
+    <h2>Ended Auctions</h2>
+    <div class="auction-grid">
+
+        {% for auction in ended_auctions %}
+        <div class="auction-card ended">
+
+            {% if auction.image %}
+                <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+            {% endif %}
+
+            <h3>{{ auction.title }}</h3>
+
+            {% with highest=auction.highest_bid %}
+                {% if highest %}
+                    <p>Final Price: ₹{{ highest.amount }}</p>
+                {% else %}
+                    <p>No bids</p>
+                {% endif %}
+            {% endwith %}
+
+            <p>Status: {{ auction.status }}</p>
+
+            {% if auction.winner %}
+                <p class="winner">Winner: {{ auction.winner.username }}</p>
+            {% else %}
+                <p class="not-sold">Not Sold</p>
+            {% endif %}
+
+        </div>
+        {% empty %}
+        <p>No ended auctions.</p>
+        {% endfor %}
+
+    </div>
+</section>
+
+
 
 <section class="features">
     <h2>Platform Features</h2>

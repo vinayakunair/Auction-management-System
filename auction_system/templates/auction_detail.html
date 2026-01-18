@@ -12,12 +12,16 @@
 
     <p>{{ auction.description }}</p>
     <p>Base Price: ₹{{ auction.base_price }}</p>
-    <p>Time Left: {{ auction.time_left }}</p>
+   
     <p>Status: <span id="auction-status">{{ auction.status }}</span></p>
 
-    <span class="countdown"
+  <p>Time Left:
+    <span id="countdown"
           data-end="{{ auction.end_time|date:'Y-m-d H:i:s' }}">
     </span>
+</p>
+
+
 
     {% if auction.winner %}
         <p>Winner: {{ auction.winner.username }}</p>
@@ -100,9 +104,46 @@
 </style>
 
 <script>
-setInterval(() => {
-    location.reload();
-}, 10000);
+function startCountdown() {
+    const el = document.getElementById("countdown");
+    if (!el) return;
+
+    const endTime = new Date(el.dataset.end.replace(" ", "T"));
+
+    function update() {
+        const now = new Date();
+        let diff = endTime - now;
+
+        if (diff <= 0) {
+            el.innerText = "Auction Ended";
+            return;
+        }
+
+        const totalSeconds = Math.floor(diff / 1000);
+        if (totalSeconds <= 30) {
+            el.style.color = "red";
+            el.style.fontWeight = "bold";
+                }
+
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        if (minutes > 0) {
+            el.innerText = `${minutes}m ${seconds.toString().padStart(2, '0')}s left`;
+        } else {
+            el.innerText = `${seconds}s left`;
+        }
+    }
+
+    update();
+    setInterval(update, 1000);
+}
+
+startCountdown();
+
+
 </script>
+
+
 
 {% endblock %}

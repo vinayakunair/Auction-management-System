@@ -59,3 +59,8 @@ html, body{
     align-items: center;
     gap: 6px;
 }
+
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+}

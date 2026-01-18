@@ -110,8 +110,6 @@ TIME_ZONE = 'Asia/Kolkata'
 
 USE_L10N = False
 
-DATETIME_FORMAT = 'd M Y, h:i A'
-TIME_FORMAT = 'h:i A'
 
 
 USE_TZ = True
@@ -125,8 +123,9 @@ STATICFILES_DIRS = [
     BASE_DIR/"static"
 ]
 
-MEDIA_URL = ''
-MEDIA_ROOT = BASE_DIR/'media'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

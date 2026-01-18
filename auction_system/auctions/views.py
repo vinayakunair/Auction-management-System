@@ -6,17 +6,19 @@ from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render
 
-def auction_list(request):
-    return render(request, 'auction_list.html')
+from django.utils import timezone
+
+from django.http import JsonResponse
+
+
+
 
 @login_required
 def auction_detail(request, pk):
     auction = get_object_or_404(AuctionItem, pk=pk)
     bids = auction.bids.order_by('-amount')
-
     form = None
 
- 
     if request.user.role == 'buyer' and auction.is_live():
         if request.method == 'POST':
             form = BidForm(request.POST)
@@ -28,9 +30,13 @@ def auction_detail(request, pk):
                 highest = auction.highest_bid()
                 min_bid = highest.amount if highest else auction.base_price
 
-                if bid.amount > min_bid:
+                if highest and highest.bidder == request.user:
+                    form.add_error(None, "You are already the highest bidder")
+
+                elif bid.amount > min_bid:
                     bid.save()
                     return redirect('auction_detail', pk=auction.pk)
+
                 else:
                     form.add_error('amount', 'Bid must be higher than current bid')
         else:
@@ -44,6 +50,9 @@ def auction_detail(request, pk):
 
 
 
+    
+
+
 @login_required
 def seller_dashboard(request):
     auctions = AuctionItem.objects.filter(seller=request.user)
@@ -52,13 +61,18 @@ def seller_dashboard(request):
 
 @login_required
 def create_auction(request):
+    if request.user.role != 'seller':
+        return redirect('auction_list')
+
     form = AuctionItemForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         auction = form.save(commit=False)
         auction.seller = request.user
         auction.save()
         return redirect('seller_dashboard')
+
     return render(request, 'auction_form.html', {'form': form})
+
 
 
 @login_required
@@ -76,3 +90,20 @@ def delete_auction(request, pk):
     auction = get_object_or_404(AuctionItem, pk=pk, seller=request.user)
     auction.delete()
     return redirect('seller_dashboard')
+
+
+
+@login_required
+def auction_status_api(request, pk):
+    auction = get_object_or_404(AuctionItem, pk=pk)
+
+    winner = None
+    winning_user = auction.winner()
+    if winning_user:
+        winner = winning_user.username
+
+    return JsonResponse({
+        'status': auction.status(),
+        'winner': winner,
+        'ended': auction.has_ended(),
+    })

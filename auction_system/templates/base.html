@@ -21,33 +21,56 @@
 
     <header class="navbar">
         <div class="navbar-left">
-            <img src="{% static 'images/logo.jpg' %}" class="logo">
-            <span>AMS Auctions</span>
+            <a href="{% url 'homepage' %}" class="logo-link">
+                <img src="{% static 'images/logo.jpg' %}" class="logo">
+                <span>AMS Auctions</span>
+            </a>
         </div>
+
+
 
         <div class="navbar-center"></div>
 
         <div class="navbar-right">
-           
-        
+
             {% if user.is_authenticated %}
                 <div class="dropdown">
                     <a class="right-item dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                        <span class="material-symbols-outlined">account_circle</span>Account
+                        <span class="material-symbols-outlined">account_circle</span>
+                        Account
                     </a>
 
                     <ul class="dropdown-menu">
-                        <li><span class="dropdown-item-text">User: {{ request.user }}</span></li>
+                        <li>
+                            <span class="dropdown-item-text">
+                                User: {{ request.user }}
+                            </span>
+                        </li>
+
                         <li><hr class="dropdown-divider"></li>
-                        
-                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                        <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
-                        <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
-                        <li><a class="dropdown-item" href="{% url 'seller_dashboard' %}">Seller Dashboard</a></li>
+
+                        <li>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="{% url 'register' %}">Register</a>
+                        </li>
+
+                        {% if request.user.role == 'seller' %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'seller_dashboard' %}">
+                                    Seller Dashboard
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
-                {% endif %}
+            {% endif %}
+
         </div>
+
+     
     </header>
 
     <div class="content">

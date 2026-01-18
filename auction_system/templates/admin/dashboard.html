@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}
+{% block content %}
+
+<h1>Admin Dashboard</h1>
+
+<div class="stats">
+    <div>Total Users: {{ total_users }}</div>
+    <div>Total Auctions: {{ total_auctions }}</div>
+    <div>Active Auctions: {{ active_auctions }}</div>
+    <div>Total Bids: {{ total_bids }}</div>
+</div>
+
+<h2>Auctions</h2>
+
+<table class="admin-table">
+    <tr>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+
+    {% for auction in auctions %}
+    <tr>
+        <td>{{ auction.title }}</td>
+        <td>
+            {% if auction.is_active %}
+                Active
+            {% else %}
+                Disabled
+            {% endif %}
+        </td>
+        <td>
+            {% if auction.is_active %}
+                <a href="{% url 'disable_auction' auction.id %}" class="btn disable">
+                    Disable
+                </a>
+            {% else %}
+                <a href="{% url 'approve_auction' auction.id %}" class="btn approve">
+                    Approve
+                </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
+

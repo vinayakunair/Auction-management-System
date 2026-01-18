@@ -1,12 +1,14 @@
 from django.urls import path
-from .views import auction_list, auction_detail, seller_dashboard, create_auction, edit_auction, delete_auction
+from .views import *
 
 urlpatterns = [
-    path('auclist', auction_list, name='auction_list'),
+    
+    path('auction/<int:pk>/status/', auction_status_api, name='auction_status_api'),
+
     path('<int:pk>/', auction_detail, name='auction_detail'),
+
     path('seller/dashboard/', seller_dashboard, name='seller_dashboard'),
     path('seller/create/', create_auction, name='create_auction'),
-    path('seller/edit/<int:pk>/',edit_auction, name='edit_auction'),
+    path('seller/edit/<int:pk>/', edit_auction, name='edit_auction'),
     path('seller/delete/<int:pk>/', delete_auction, name='delete_auction'),
 ]
-
