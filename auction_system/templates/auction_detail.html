@@ -17,20 +17,25 @@
 
   <p>Time Left:
     <span id="countdown"
-          data-end="{{ auction.end_time|date:'Y-m-d H:i:s' }}">
+          data-end="{{ auction.end_time|date:'c' }}">
     </span>
 </p>
 
 
 
-    {% if auction.winner %}
-        <p>Winner: {{ auction.winner.username }}</p>
-    {% endif %}
+   <p id="winner"></p>
+
 
     <h3>Bids</h3>
-    <ul>
+    <ul id="bids-list">
+
         {% for bid in bids %}
-            <li>{{ bid.bidder.username }} → ₹{{ bid.amount }}</li>
+            <li>
+                <strong>{{ bid.bidder.username }}</strong>
+                <span>₹{{ bid.amount }}</span>
+                <small>{{ bid.timestamp|timesince }} ago</small>
+            </li>
+
         {% empty %}
             <li>No bids yet</li>
         {% endfor %}
@@ -42,10 +47,28 @@
         <form method="post">
             {% csrf_token %}
 
-            <div class="box">
-                {{ form.amount.label }}
+           <div class="box">
+                <label for="{{ form.amount.id_for_label }}">
+                    {{ form.amount.label }}
+                </label>
+
                 {{ form.amount }}
+
+                {% if form.amount.errors %}
+                    <div class="error">
+                        {{ form.amount.errors }}
+                    </div>
+                {% endif %}
             </div>
+
+
+                {% if form.amount.errors %}
+                    <div class="error">
+                        {{ form.amount.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
 
             <div class="box">
                 <button type="submit">Place Bid</button>
@@ -101,6 +124,12 @@
     list-style: none;
 }
 
+.error {
+    color: #c62828;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
 </style>
 
 <script>
@@ -108,7 +137,7 @@ function startCountdown() {
     const el = document.getElementById("countdown");
     if (!el) return;
 
-    const endTime = new Date(el.dataset.end.replace(" ", "T"));
+    const endTime = new Date(el.dataset.end);
 
     function update() {
         const now = new Date();
@@ -116,14 +145,18 @@ function startCountdown() {
 
         if (diff <= 0) {
             el.innerText = "Auction Ended";
+            document.querySelector("form")?.remove();
+            document.getElementById("auction-status").innerText = "Closed";
+            clearInterval(timer);
             return;
         }
 
         const totalSeconds = Math.floor(diff / 1000);
+
         if (totalSeconds <= 30) {
             el.style.color = "red";
             el.style.fontWeight = "bold";
-                }
+        }
 
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
@@ -136,13 +169,45 @@ function startCountdown() {
     }
 
     update();
-    setInterval(update, 1000);
+    const timer = setInterval(update, 1000);
 }
 
 startCountdown();
 
 
+function checkAuctionResult() {
+    fetch("{% url 'auction_status_api' auction.id %}")
+        .then(res => res.json())
+        .then(data => {
+            // update status
+            document.getElementById("auction-status").innerText = data.status;
+
+            // update bids
+            const ul = document.getElementById("bids-list");
+            ul.innerHTML = "";
+
+            data.bids.forEach(bid => {
+                const li = document.createElement("li");
+                li.innerText = `${bid.bidder__username} → ₹${bid.amount}`;
+                ul.appendChild(li);
+            });
+
+            // update winner
+            if (data.ended) {
+                if (data.winner) {
+                    document.getElementById("winner").innerText =
+                        "Winner: " + data.winner;
+                }
+                clearInterval(resultTimer);
+            }
+        });
+}
+
+const resultTimer = setInterval(checkAuctionResult, 5000);
+
+
 </script>
+
 
 
 

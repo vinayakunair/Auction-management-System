@@ -30,17 +30,14 @@ def auction_detail(request, pk):
                 highest = auction.highest_bid()
                 min_bid = highest.amount if highest else auction.base_price
 
-                if highest and highest.bidder == request.user:
-                    form.add_error(None, "You are already the highest bidder")
-
-                elif bid.amount > min_bid:
+                if bid.amount > min_bid:
                     bid.save()
                     return redirect('auction_detail', pk=auction.pk)
-
                 else:
                     form.add_error('amount', 'Bid must be higher than current bid')
         else:
             form = BidForm()
+
 
     return render(request, 'auction_detail.html', {
         'auction': auction,
@@ -97,6 +94,11 @@ def delete_auction(request, pk):
 def auction_status_api(request, pk):
     auction = get_object_or_404(AuctionItem, pk=pk)
 
+    bids = list(
+        auction.bids.order_by('-amount')
+        .values('bidder__username', 'amount')
+    )
+
     winner = None
     winning_user = auction.winner()
     if winning_user:
@@ -106,4 +108,6 @@ def auction_status_api(request, pk):
         'status': auction.status(),
         'winner': winner,
         'ended': auction.has_ended(),
+        'bids': bids,
     })
+
