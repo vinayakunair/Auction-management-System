@@ -1,17 +1,12 @@
 from django import forms
-from .models import Bid, AuctionItem
-from django import forms
 from django.utils import timezone
 from .models import Bid, AuctionItem
-
 
 
 class BidForm(forms.ModelForm):
     class Meta:
         model = Bid
         fields = ['amount']
-
-
 
 
 class AuctionItemForm(forms.ModelForm):
@@ -23,12 +18,9 @@ class AuctionItemForm(forms.ModelForm):
             'category',
             'image',
             'base_price',
-            'reserve_price',
             'start_time',
             'end_time',
-            'is_active'
         ]
-
         widgets = {
             'start_time': forms.DateTimeInput(
                 attrs={
@@ -43,3 +35,15 @@ class AuctionItemForm(forms.ModelForm):
                 }
             ),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start = cleaned_data.get("start_time")
+        end = cleaned_data.get("end_time")
+
+        if start and end and end <= start:
+            raise forms.ValidationError(
+                "End time must be after start time."
+            )
+
+        return cleaned_data

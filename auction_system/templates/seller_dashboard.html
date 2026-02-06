@@ -10,8 +10,11 @@
         Create New Auction
     </a>
 
+    <!-- ================= Pending Approval ================= -->
+
+    <h3>Pending Approval</h3>
     <ul class="auction-list">
-    {% for auction in auctions %}
+    {% for auction in pending_auctions %}
         <li class="auction-item">
 
             {% if auction.image %}
@@ -19,38 +22,129 @@
             {% endif %}
 
             <div class="auction-info">
-                {{ auction.title }} |
-                {{ auction.status }} |
-                {{ auction.time_left }}
+                {{ auction.title }} | Pending Approval
             </div>
 
             <div class="auction-actions">
-                <a href="{% url 'edit_auction' auction.id %}">Edit</a>
-               <a href="{% url 'delete_auction' auction.id %}"
-                onclick="return confirm('Are you sure you want to delete this auction?');">
-                Delete
+                <a href="{% url 'seller_auction_detail' auction.id %}">
+                    View Details
+                </a>
+                <span class="locked">Locked</span>
+            </div>
+
+        </li>
+    {% empty %}
+        <li class="empty">No pending auctions</li>
+    {% endfor %}
+    </ul>
+
+    <!-- ================= Active Auctions ================= -->
+
+    <h3>Active Auctions</h3>
+    <ul class="auction-list">
+    {% for auction in active_auctions %}
+        <li class="auction-item">
+
+            {% if auction.image %}
+                <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+            {% endif %}
+
+            <div class="auction-info">
+                {{ auction.title }} | Active | {{ auction.time_left }}
+            </div>
+
+            <div class="auction-actions">
+                <a href="{% url 'seller_auction_detail' auction.id %}">
+                    View Details
+                </a>
+                <span class="locked">Locked</span>
+            </div>
+
+        </li>
+    {% empty %}
+        <li class="empty">No active auctions</li>
+    {% endfor %}
+    </ul>
+
+    <!-- ================= Upcoming Auctions ================= -->
+
+    <h3>Upcoming Auctions</h3>
+    <ul class="auction-list">
+    {% for auction in upcoming_auctions %}
+        <li class="auction-item">
+
+            {% if auction.image %}
+                <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+            {% endif %}
+
+            <div class="auction-info">
+                {{ auction.title }} | Upcoming
+            </div>
+
+            <div class="auction-actions">
+                <a href="{% url 'seller_auction_detail' auction.id %}">
+                    View Details
+                </a>
+                <a href="{% url 'edit_auction' auction.id %}">
+                    Edit
+                </a>
+                <a href="{% url 'delete_auction' auction.id %}"
+                   onclick="return confirm('Are you sure?');">
+                    Delete
                 </a>
             </div>
 
         </li>
     {% empty %}
-        <li class="empty">No auctions</li>
+        <li class="empty">No upcoming auctions</li>
+    {% endfor %}
+    </ul>
+
+    <!-- ================= Ended Auctions ================= -->
+
+    <h3>Ended Auctions</h3>
+    <ul class="auction-list">
+    {% for auction in ended_auctions %}
+        <li class="auction-item">
+
+            {% if auction.image %}
+                <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+            {% endif %}
+
+            <div class="auction-info">
+                {{ auction.title }} | Ended
+            </div>
+
+            <div class="auction-actions">
+                <a href="{% url 'seller_auction_detail' auction.id %}">
+                    View Details
+                </a>
+
+                {% if not auction.highest_bid %}
+                    <a href="{% url 'delete_auction' auction.id %}"
+                       onclick="return confirm('No bids. Delete auction?');">
+                        Delete
+                    </a>
+                {% else %}
+                    <span class="locked">Locked</span>
+                {% endif %}
+            </div>
+
+        </li>
+    {% empty %}
+        <li class="empty">No ended auctions</li>
     {% endfor %}
     </ul>
 
 </div>
 
-
-
-
 <style>
-
-    .seller-dashboard h2 {
+.seller-dashboard h2 {
     margin-bottom: 16px;
     font-size: 24px;
 }
 
-.seller-dashboard .create-btn {
+.create-btn {
     display: inline-block;
     margin-bottom: 20px;
     padding: 8px 14px;
@@ -61,13 +155,13 @@
     font-size: 14px;
 }
 
-.seller-dashboard .auction-list {
+.auction-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-.seller-dashboard .auction-item {
+.auction-item {
     display: flex;
     align-items: center;
     gap: 15px;
@@ -79,28 +173,41 @@
     font-size: 14px;
 }
 
-.seller-dashboard img {
+.auction-item img {
     width: 150px;
     border-radius: 4px;
 }
 
-.seller-dashboard .auction-actions a {
+.auction-info {
+    flex: 1;
+}
+
+.auction-actions a {
     margin-right: 10px;
     text-decoration: none;
     font-size: 13px;
     color: #0066cc;
 }
 
-.seller-dashboard .auction-actions a:hover {
+.auction-actions a:hover {
     text-decoration: underline;
 }
 
-.seller-dashboard .empty {
+.locked {
+    color: #999;
+    font-size: 13px;
+}
+
+.empty {
     text-align: center;
     color: #777;
 }
 
+h3 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
 </style>
 
 {% endblock %}
-

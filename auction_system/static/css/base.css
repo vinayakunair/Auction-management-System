@@ -25,10 +25,11 @@ html, body{
     top: 0;
     display: flex;
     align-items: center;
-    padding: 10px 10px;
+    padding: 10px 20px;
     background-color:white;
     width: 100%;
-      z-index: 9999;
+    z-index: 9999;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .content{
@@ -63,4 +64,29 @@ html, body{
 .logo-link {
     text-decoration: none;
     color: inherit;
+}
+
+.right-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    color: #111827;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.right-item:hover {
+    background: rgba(220, 38, 38, 0.12);
+    color: #dc2626;
+    transform: translateY(-1px);
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }

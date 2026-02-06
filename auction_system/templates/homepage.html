@@ -21,40 +21,62 @@
     </div>
 </section>
 
-<section class="search-section">
-    <input type="text" placeholder="Search auctions by item, category, or keyword">
-</section>
-
 <section class="categories">
     <h2>Auction Categories</h2>
 
     <div class="category-grid">
-
-        <div class="category-card">
-            <img src="{% static 'images/electronics.jpg' %}" alt="Electronics">
+        <a href="{% url 'category_auctions' 'electronics' %}" class="category-card">
+            <img src="{% static 'images/electronics.jpg' %}">
             <span>Electronics</span>
-        </div>
+        </a>
 
-        <div class="category-card">
-            <img src="{% static 'images/automobiles.avif' %}" alt="Automobiles">
-            <span>Automobiles</span>
-        </div>
+        <a href="{% url 'category_auctions' 'automobile' %}" class="category-card">
+            <img src="{% static 'images/automobiles.avif' %}">
+            <span>Automobile</span>
+        </a>
 
-        <div class="category-card">
-            <img src="{% static 'images/realestate.jpg' %}" alt="Real Estate">
+        <a href="{% url 'category_auctions' 'real_estate' %}" class="category-card">
+            <img src="{% static 'images/realestate.jpg' %}">
             <span>Real Estate</span>
-        </div>
+        </a>
 
-        <div class="category-card">
-            <img src="{% static 'images/art.jpg' %}" alt="Art & Collectibles">
+        <a href="{% url 'category_auctions' 'art' %}" class="category-card">
+            <img src="{% static 'images/art.jpg' %}">
             <span>Art & Collectibles</span>
-        </div>
+        </a>
 
-        <div class="category-card">
-            <img src="{% static 'images/assets.jpg' %}" alt="Assets & Others">
-            <span>Assets & Others</span>
-        </div>
+        <a href="{% url 'category_auctions' 'others' %}" class="category-card">
+            <img src="{% static 'images/assets.jpg' %}">
+            <span>Others</span>
+        </a>
+    </div>
+</section>
 
+<section class="upcoming-auctions">
+    <h2>Upcoming Auctions</h2>
+
+    <div class="auction-grid">
+        {% for auction in upcoming_auctions %}
+            {% if user.is_authenticated %}
+                <a href="{% url 'auction_detail' auction.id %}" class="auction-card upcoming">
+            {% else %}
+                <a href="{% url 'login' %}?next={% url 'auction_detail' auction.id %}" class="auction-card upcoming">
+            {% endif %}
+
+                <span class="badge upcoming">Upcoming</span>
+
+                {% if auction.image %}
+                    <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+                {% endif %}
+
+                <h3>{{ auction.title }}</h3>
+                <p>Base Price: ₹{{ auction.base_price }}</p>
+                <p>Starts at: {{ auction.start_time|date:"d M Y, h:i A" }}</p>
+
+            </a>
+        {% empty %}
+            <p>No upcoming auctions.</p>
+        {% endfor %}
     </div>
 </section>
 
@@ -63,31 +85,34 @@
     <div class="auction-grid">
 
         {% for auction in active_auctions %}
-        <a href="{% url 'auction_detail' auction.id %}" class="auction-card">
-
-            {% if auction.image %}
-                <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+            {% if user.is_authenticated %}
+                <a href="{% url 'auction_detail' auction.id %}" class="auction-card">
+            {% else %}
+                <a href="{% url 'login' %}?next={% url 'auction_detail' auction.id %}" class="auction-card">
             {% endif %}
 
-            <h3>{{ auction.title }}</h3>
-            <p>Base Price: ₹{{ auction.base_price }}</p>
-
-            {% with highest=auction.highest_bid %}
-                {% if highest %}
-                    <p>Highest Bid: ₹{{ highest.amount }}</p>
-                {% else %}
-                    <p>No bids yet</p>
+                {% if auction.image %}
+                    <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
                 {% endif %}
-            {% endwith %}
 
-            <p>Ends at: {{ auction.end_time }}</p>
-            <p>Status: {{ auction.status }}</p>
+                <h3>{{ auction.title }}</h3>
+                <p>Base Price: ₹{{ auction.base_price }}</p>
 
-        </a>
+                {% with highest=auction.highest_bid %}
+                    {% if highest %}
+                        <p>Highest Bid: ₹{{ highest.amount }}</p>
+                    {% else %}
+                        <p>No bids yet</p>
+                    {% endif %}
+                {% endwith %}
+
+                <p>Ends at: {{ auction.end_time|date:"d M Y, h:i A" }}</p>
+                <p class="status-live">Live</p>
+
+            </a>
         {% empty %}
-        <p>No active auctions available.</p>
+            <p>No active auctions available.</p>
         {% endfor %}
-
     </div>
 </section>
 
@@ -96,39 +121,40 @@
     <div class="auction-grid">
 
         {% for auction in ended_auctions %}
-        <div class="auction-card ended">
-
-            {% if auction.image %}
-                <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
-            {% endif %}
-
-            <h3>{{ auction.title }}</h3>
-
-            {% with highest=auction.highest_bid %}
-                {% if highest %}
-                    <p>Final Price: ₹{{ highest.amount }}</p>
-                {% else %}
-                    <p>No bids</p>
-                {% endif %}
-            {% endwith %}
-
-            <p>Status: {{ auction.status }}</p>
-
-            {% if auction.winner %}
-                <p class="winner">Winner: {{ auction.winner.username }}</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'auction_detail' auction.id %}" class="auction-card ended">
             {% else %}
-                <p class="not-sold">Not Sold</p>
+                <a href="{% url 'login' %}?next={% url 'auction_detail' auction.id %}" class="auction-card ended">
             {% endif %}
 
-        </div>
-        {% empty %}
-        <p>No ended auctions.</p>
-        {% endfor %}
+                {% if auction.image %}
+                    <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+                {% endif %}
 
+                <h3>{{ auction.title }}</h3>
+
+                {% with highest=auction.highest_bid %}
+                    {% if highest %}
+                        <p>Final Price: ₹{{ highest.amount }}</p>
+                    {% else %}
+                        <p>No bids</p>
+                    {% endif %}
+                {% endwith %}
+
+                <p>Status: {{ auction.status }}</p>
+
+                {% if auction.winner %}
+                    <p class="winner">Winner: {{ auction.winner.username }}</p>
+                {% else %}
+                    <p class="not-sold">Not Sold</p>
+                {% endif %}
+
+            </a>
+        {% empty %}
+            <p>No ended auctions.</p>
+        {% endfor %}
     </div>
 </section>
-
-
 
 <section class="features">
     <h2>Platform Features</h2>

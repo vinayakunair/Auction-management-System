@@ -16,3 +16,4 @@ class CustomUser(AbstractUser):
     )
 
     role = models.CharField(max_length=10,choices=ROLE_CHOICES,default='buyer')
+    is_blocked = models.BooleanField(default=False)

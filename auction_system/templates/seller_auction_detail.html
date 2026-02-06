@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="auction-card">
+
+    <h2>{{ auction.title }}</h2>
+
+    {% if auction.image %}
+        <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+    {% endif %}
+
+    <p><strong>Description:</strong> {{ auction.description }}</p>
+    <p><strong>Category:</strong> {{ auction.category }}</p>
+    <p><strong>Base Price:</strong> ₹{{ auction.base_price }}</p>
+
+    <p><strong>Status:</strong> {{ auction.status }}</p>
+
+    {% if not auction.is_approved %}
+        <p style="color:#999;">Awaiting admin approval</p>
+    {% elif auction.is_live %}
+        <p style="color:green;">Auction is live</p>
+    {% elif auction.has_ended %}
+        <p style="color:red;">Auction ended</p>
+    {% else %}
+        <p>Scheduled</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Bids</h3>
+    <ul>
+        {% for bid in bids %}
+            <li>
+                {{ bid.bidder.username }} — ₹{{ bid.amount }}
+                <small>({{ bid.timestamp|timesince }} ago)</small>
+            </li>
+        {% empty %}
+            <li>No bids yet</li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+<style>
+.auction-card {
+    max-width: 700px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.auction-card img {
+    max-width: 300px;
+    display: block;
+    margin-bottom: 15px;
+}
+</style>
+
+{% endblock %}

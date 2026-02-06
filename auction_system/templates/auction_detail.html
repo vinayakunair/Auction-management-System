@@ -11,43 +11,67 @@
     {% endif %}
 
     <p>{{ auction.description }}</p>
+
     <p>Base Price: ₹{{ auction.base_price }}</p>
+
+    <p>Current Price: ₹{{ auction.current_price }}</p>
+
+    <p>
+        Status:
+        <span id="auction-status">{{ auction.status }}</span>
+    </p>
+        {% if auction.has_ended %}
+        {% if auction.winner %}
+            <p class="winner">Winner: {{ auction.winner.username }}</p>
+        {% else %}
+            <p class="not-sold">Not Sold</p>
+        {% endif %}
+    {% endif %}
+
    
-    <p>Status: <span id="auction-status">{{ auction.status }}</span></p>
 
-  <p>Time Left:
-    <span id="countdown"
-          data-end="{{ auction.end_time|date:'c' }}">
-    </span>
-</p>
+    {% if not auction.is_approved %}
+        <p style="color:#999;">Awaiting admin approval</p>
 
+    {% elif auction.is_live %}
+        <p>
+            Time Left:
+            <span id="countdown"
+                  data-end="{{ auction.end_time|date:'c' }}">
+            </span>
+        </p>
 
+    {% elif auction.has_ended %}
+        <p style="color:#999;">Auction ended</p>
 
-   <p id="winner"></p>
+    {% else %}
+        <p style="color:#999;">Auction scheduled</p>
+    {% endif %}
 
+    <p id="winner"></p>
 
     <h3>Bids</h3>
     <ul id="bids-list">
-
         {% for bid in bids %}
             <li>
                 <strong>{{ bid.bidder.username }}</strong>
                 <span>₹{{ bid.amount }}</span>
                 <small>{{ bid.timestamp|timesince }} ago</small>
             </li>
-
         {% empty %}
             <li>No bids yet</li>
         {% endfor %}
     </ul>
 
-    {% if form %}
+    
+
+    {% if form and auction.is_live %}
         <h3>Place a Bid</h3>
 
         <form method="post">
             {% csrf_token %}
 
-           <div class="box">
+            <div class="box">
                 <label for="{{ form.amount.id_for_label }}">
                     {{ form.amount.label }}
                 </label>
@@ -61,19 +85,23 @@
                 {% endif %}
             </div>
 
-
-                {% if form.amount.errors %}
-                    <div class="error">
-                        {{ form.amount.errors }}
-                    </div>
-                {% endif %}
-            </div>
-
-
             <div class="box">
                 <button type="submit">Place Bid</button>
             </div>
         </form>
+
+    {% else %}
+        {% if not auction.is_approved %}
+            <p style="color:#777;">Bidding will open after admin approval.</p>
+        {% elif user.role != 'buyer' %}
+            <p style="color:#777;">Only buyers can place bids.</p>
+        {% elif user == auction.seller %}
+            <p style="color:#777;">You cannot bid on your own auction.</p>
+        {% elif auction.has_ended %}
+            <p style="color:#777;">Bidding has ended.</p>
+        {% else %}
+            <p style="color:#777;">Bidding not available.</p>
+        {% endif %}
     {% endif %}
 
 </div>
@@ -117,11 +145,6 @@
 .auction-card ul {
     list-style: none;
     padding-left: 0;
-    margin-left: 0;
-}
-
-.auction-card li {
-    list-style: none;
 }
 
 .error {
@@ -129,7 +152,6 @@
     font-size: 13px;
     margin-top: 6px;
 }
-
 </style>
 
 <script>
@@ -141,31 +163,33 @@ function startCountdown() {
 
     function update() {
         const now = new Date();
-        let diff = endTime - now;
+        const diff = endTime - now;
 
         if (diff <= 0) {
             el.innerText = "Auction Ended";
             document.querySelector("form")?.remove();
-            document.getElementById("auction-status").innerText = "Closed";
             clearInterval(timer);
             return;
         }
 
         const totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
 
         if (totalSeconds <= 30) {
             el.style.color = "red";
             el.style.fontWeight = "bold";
         }
 
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
+        let text = "";
+        if (days > 0) text += `${days}d `;
+        if (hours > 0 || days > 0) text += `${hours}h `;
+        if (minutes > 0 || hours > 0 || days > 0) text += `${minutes}m `;
+        text += `${seconds.toString().padStart(2, "0")}s left`;
 
-        if (minutes > 0) {
-            el.innerText = `${minutes}m ${seconds.toString().padStart(2, '0')}s left`;
-        } else {
-            el.innerText = `${seconds}s left`;
-        }
+        el.innerText = text;
     }
 
     update();
@@ -173,42 +197,6 @@ function startCountdown() {
 }
 
 startCountdown();
-
-
-function checkAuctionResult() {
-    fetch("{% url 'auction_status_api' auction.id %}")
-        .then(res => res.json())
-        .then(data => {
-            // update status
-            document.getElementById("auction-status").innerText = data.status;
-
-            // update bids
-            const ul = document.getElementById("bids-list");
-            ul.innerHTML = "";
-
-            data.bids.forEach(bid => {
-                const li = document.createElement("li");
-                li.innerText = `${bid.bidder__username} → ₹${bid.amount}`;
-                ul.appendChild(li);
-            });
-
-            // update winner
-            if (data.ended) {
-                if (data.winner) {
-                    document.getElementById("winner").innerText =
-                        "Winner: " + data.winner;
-                }
-                clearInterval(resultTimer);
-            }
-        });
-}
-
-const resultTimer = setInterval(checkAuctionResult, 5000);
-
-
 </script>
-
-
-
 
 {% endblock %}

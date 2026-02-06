@@ -33,42 +33,62 @@
 
         <div class="navbar-right">
 
-            {% if user.is_authenticated %}
-                <div class="dropdown">
-                    <a class="right-item dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                        <span class="material-symbols-outlined">account_circle</span>
-                        Account
-                    </a>
+    {% if user.is_authenticated %}
+        <div class="dropdown">
+            <a class="right-item dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                <span class="material-symbols-outlined">account_circle</span>
+                Account
+            </a>
 
-                    <ul class="dropdown-menu">
-                        <li>
-                            <span class="dropdown-item-text">
-                                User: {{ request.user }}
-                            </span>
-                        </li>
+            <ul class="dropdown-menu">
+                <li>
+                    <span class="dropdown-item-text">
+                        User: {{ request.user }}
+                    </span>
+                </li>
 
-                        <li><hr class="dropdown-divider"></li>
+                <li><hr class="dropdown-divider"></li>
 
-                        <li>
-                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
-                        </li>
+                {% if request.user.role == 'seller' %}
+                    <li>
+                        <a class="dropdown-item" href="{% url 'seller_dashboard' %}">
+                            Seller Dashboard
+                        </a>
+                    </li>
+                {% endif %}
 
-                        <li>
-                            <a class="dropdown-item" href="{% url 'register' %}">Register</a>
-                        </li>
+                {% if request.user.role == 'buyer' %}
+                    <li>
+                        <a class="dropdown-item" href="{% url 'buyer_dashboard' %}">
+                            Buyer Dashboard
+                        </a>
+                    </li>
+                {% endif %}
 
-                        {% if request.user.role == 'seller' %}
-                            <li>
-                                <a class="dropdown-item" href="{% url 'seller_dashboard' %}">
-                                    Seller Dashboard
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            {% endif %}
+                {% if request.user.role == 'admin' %}
+                    <li>
+                        <a class="dropdown-item" href="{% url 'admin_dashboard' %}">
+                            Admin Dashboard
+                        </a>
+                    </li>
+                {% endif %}
 
+                <li><hr class="dropdown-divider"></li>
+
+                <li>
+                    <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                </li>
+            </ul>
         </div>
+    {% endif %}
+    {% if not user.is_authenticated %}
+    <a href="{% url 'login' %}" class="right-item">Login</a>
+    <a href="{% url 'register' %}" class="right-item">Register</a>
+{% endif %}
+
+
+</div>
+
 
      
     </header>

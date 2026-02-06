@@ -1,5 +1,4 @@
-
-    .hero{
+.hero{
     padding: 80px 40px;
     text-align: center;
     background: linear-gradient(to right, #1f2937, #111827);
@@ -72,10 +71,32 @@
 
 .category-card{
     background: #ffffff;
-    padding: 30px;
+    padding: 20px;
     text-align: center;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: block;
+    text-decoration: none;
+    color: #000;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card img{
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.category-card span{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.category-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
 }
 
 .active-auctions{
@@ -88,40 +109,37 @@
     margin-bottom: 30px;
 }
 
+.upcoming-auctions{
+    padding: 60px 40px;
+    background: #ffffff;
+}
+
+.upcoming-auctions h2{
+    text-align: center;
+    margin-bottom: 30px;
+}
+
 .auction-grid{
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 280px));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     justify-content: center;
 }
-
 
 .auction-card{
     background: white;
     padding: 20px;
     border-radius: 12px;
+    position: relative;
+    text-decoration: none;
+    color: #000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.features{
-    padding: 60px 40px;
-    background: #ffffff;
-}
-
-.features h2{
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.feature-grid{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.feature-card{
-    padding: 20px;
-    background: #f9fafb;
-    border-left: 4px solid #dc2626;
+.auction-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
 }
 
 .auction-card img{
@@ -144,45 +162,27 @@
     color: #374151;
 }
 
-.auction-card{
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.auction-card:hover{
-    transform: translateY(-4px);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-}
-
-
-
-.category-card{
+.features{
+    padding: 60px 40px;
     background: #ffffff;
-    padding: 20px;
+}
+
+.features h2{
     text-align: center;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    cursor: pointer;
+    margin-bottom: 30px;
 }
 
-.category-card img{
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 10px;
+.feature-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
 }
 
-.category-card span{
-    font-size: 18px;
-    font-weight: 600;
-}
-
-
-.category-card:hover{
-    transform: translateY(-4px);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+.feature-card{
+    padding: 20px;
+    background: #f9fafb;
+    border-left: 4px solid #dc2626;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .feature-card:hover{
@@ -190,71 +190,70 @@
     box-shadow: 0 8px 18px rgba(0,0,0,0.12);
 }
 
-@media (max-width: 768px) {
-
-    .hero {
+@media (max-width: 768px){
+    .hero{
         padding: 60px 20px;
     }
 
-    .hero h1 {
+    .hero h1{
         font-size: 30px;
     }
 
-    .hero p {
+    .hero p{
         font-size: 16px;
     }
 
-    .hero-actions {
+    .hero-actions{
         display: flex;
         flex-direction: column;
         align-items: center;
     }
 
-    .btn {
+    .btn{
         width: 100%;
         max-width: 280px;
         padding: 12px 20px;
     }
 
-    .search-section {
+    .search-section{
         padding: 30px 20px;
     }
 
-    .search-section input {
+    .search-section input{
         width: 100%;
         font-size: 15px;
     }
 
     .categories,
     .active-auctions,
-    .features {
+    .upcoming-auctions,
+    .features{
         padding: 40px 20px;
     }
 
-    .auction-card img {
+    .auction-card img{
         height: 160px;
     }
 }
 
-@media (max-width: 480px) {
-
-    .hero h1 {
+@media (max-width: 480px){
+    .hero h1{
         font-size: 26px;
     }
 
-    .hero p {
+    .hero p{
         font-size: 15px;
     }
 
-    .category-card span {
+    .category-card span{
         font-size: 16px;
     }
 
-    .auction-card h3 {
+    .auction-card h3{
         font-size: 18px;
     }
 
-    .auction-card p {
+    .auction-card p{
         font-size: 14px;
     }
 }

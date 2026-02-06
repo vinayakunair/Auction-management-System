@@ -4,50 +4,459 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/admin.css' %}">
 {% endblock %}
+
 {% block content %}
 
-<h1>Admin Dashboard</h1>
+<div class="admin-wrapper">
 
-<div class="stats">
-    <div>Total Users: {{ total_users }}</div>
-    <div>Total Auctions: {{ total_auctions }}</div>
-    <div>Active Auctions: {{ active_auctions }}</div>
-    <div>Total Bids: {{ total_bids }}</div>
+   
+    <button class="hamburger-menu" id="hamburger-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
+
+    
+    <aside class="sidebar" id="sidebar">
+        <h2 class="logo">Admin</h2>
+        <nav>
+            <a href="{% url 'admin_dashboard' %}" class="active">Dashboard</a>
+            <a href="{% url 'admin_users_list' %}">Users</a>
+            <a href="#active-auctions">Auctions</a>
+
+            <a href="{% url 'logout' %}" class="logout">Logout</a>
+        </nav>
+
+        <div class="sidebar-stats">
+            <h3>Quick Stats</h3>
+            <div class="sidebar-stat">
+                <span>Active Auctions</span>
+                <strong>{{ active_auctions }}</strong>
+            </div>
+            <div class="sidebar-stat">
+                <span>Upcoming Auctions</span>
+                <strong>{{ upcoming_auctions }}</strong>
+            </div>
+            <div class="sidebar-stat">
+                <span>Ended Auctions</span>
+                <strong>{{ ended_auctions }}</strong>
+            </div>
+            <div class="sidebar-stat">
+                <span>Total Sellers</span>
+                <strong>{{ total_sellers }}</strong>
+            </div>
+            <div class="sidebar-stat">
+                <span>Total Buyers</span>
+                <strong>{{ total_buyers }}</strong>
+            </div>
+        </div>
+
+        <div class="sidebar-lists">
+            <h3>Active Auctions</h3>
+            <ul>
+                {% for auction in active_auctions_list %}
+                <li>{{ auction.title }}</li>
+                {% empty %}
+                <li>No active auctions</li>
+                {% endfor %}
+            </ul>
+
+
+            <h3>Upcoming Auctions</h3>
+            <ul>
+                {% for auction in upcoming_auctions_list %}
+                <li>{{ auction.title }}</li>
+                {% empty %}
+                <li>No upcoming auctions</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Ended Auctions</h3>
+            <ul>
+                {% for auction in ended_auctions_list %}
+                <li>{{ auction.title }}</li>
+                {% empty %}
+                <li>No ended auctions</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </aside>
+
+   
+    <main class="main-content">
+
+        <header class="topbar">
+            <h1>Admin Dashboard</h1>
+        </header>
+
+        
+        <section class="stats-grid">
+            <a href="{% url 'admin_users_list' %}" class="stat-card" style="text-decoration: none; color: inherit;">
+                <span>Total Users</span>
+                <h3>{{ total_users }}</h3>
+            </a>
+            <div class="stat-card">
+                <span>Total Sellers</span>
+                <h3>{{ total_sellers }}</h3>
+            </div>
+            <div class="stat-card">
+                <span>Total Buyers</span>
+                <h3>{{ total_buyers }}</h3>
+            </div>
+            <div class="stat-card">
+                <span>Total Auctions</span>
+                <h3>{{ total_auctions }}</h3>
+            </div>
+            <div class="stat-card">
+                <span>Active Auctions</span>
+                <h3>{{ active_auctions }}</h3>
+            </div>
+            <div class="stat-card">
+                <span>Total Bids</span>
+                <h3>{{ total_bids }}</h3>
+            </div>
+        </section>
+
+       
+        <section class="table-section">
+            <h2>User Management</h2>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.get_role_display }}</td>
+                        <td class="{% if user.is_blocked %}status blocked{% else %}status active{% endif %}">
+                            {% if user.is_blocked %}Blocked{% else %}Active{% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_blocked %}
+                                <form method="post" action="{% url 'unblock_user' user.id %}">
+                                    {% csrf_token %}
+                                    <button class="btn success">Unblock</button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'block_user' user.id %}">
+                                    {% csrf_token %}
+                                    <button class="btn danger">Block</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5">No users found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+   
+        <section class="table-section" id="active-auctions">
+            <h2>Active Auctions</h2>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Seller</th>
+                        <th>Current Price</th>
+                        <th>Status</th>
+                        <th>Time Left</th>
+                        <th>Winner</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for auction in active_auctions_list %}
+                    <tr>
+                        <td>{{ auction.title }}</td>
+                        <td>{{ auction.seller.username }}</td>
+                        <td>₹{{ auction.current_price|floatformat:2 }}</td>
+                        <td class="status active">{{ auction.status }}</td>
+                        <td>
+                            <span class="countdown-timer"
+                                  data-end="{{ auction.end_time|date:'c' }}"
+                                  data-auction-id="{{ auction.id }}">
+                                Calculating...
+                            </span>
+                        </td>
+                        <td>N/A</td>
+                        <td>
+                            <form method="post" action="{% url 'disable_auction' auction.id %}">
+                                {% csrf_token %}
+                                <button class="btn danger">Disable</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7">No active auctions</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="table-section">
+            <h2>Upcoming Auctions</h2>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Seller</th>
+                        <th>Base Price</th>
+                        <th>Status</th>
+                        <th>Starts In</th>
+                        <th>Winner</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for auction in upcoming_auctions_full %}
+                    <tr>
+                        <td>{{ auction.title }}</td>
+                        <td>{{ auction.seller.username }}</td>
+                        <td>₹{{ auction.base_price|floatformat:2 }}</td>
+                        <td class="status">{{ auction.status }}</td>
+                        <td>
+                            <span class="countdown-timer"
+                                  data-start="{{ auction.start_time|date:'c' }}"
+                                  data-type="upcoming">
+                                Calculating...
+                            </span>
+                        </td>
+                        <td>N/A</td>
+                        <td>
+                            {% if auction.is_approved %}
+                                <form method="post" action="{% url 'disable_auction' auction.id %}">
+                                    {% csrf_token %}
+                                    <button class="btn danger">Disable</button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'approve_auction' auction.id %}">
+                                    {% csrf_token %}
+                                    <button class="btn success">Approve</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7">No upcoming auctions</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="table-section">
+            <h2>Ended Auctions</h2>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Seller</th>
+                        <th>Current Price</th>
+                        <th>Status</th>
+                        <th>Ended</th>
+                        <th>Winner</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for auction in ended_auctions_full %}
+                    <tr>
+                        <td>{{ auction.title }}</td>
+                        <td>{{ auction.seller.username }}</td>
+                        <td>₹{{ auction.current_price|floatformat:2 }}</td>
+                        <td class="status">{{ auction.status }}</td>
+                        <td>Ended</td>
+                        <td>
+                            {% if auction.winner %}
+                                {{ auction.winner.username }}
+                            {% else %}
+                                No Winner
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <a href="{% url 'admin_auction_detail' auction.id %}" class="btn">View</a>
+                            <form method="post" action="{% url 'delete_auction_admin' auction.id %}">
+                                {% csrf_token %}
+                                <button class="btn danger"
+                                    onclick="return confirm('Delete this auction?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7">No ended auctions</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="table-section">
+            <h2>All Auctions</h2>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Seller</th>
+                        <th>Current Price</th>
+                        <th>Status</th>
+                        <th>Winner</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for auction in auctions %}
+                    <tr>
+                        <td>{{ auction.title }}</td>
+                        <td>{{ auction.seller.username }}</td>
+                        <td>₹{{ auction.current_price|floatformat:2 }}</td>
+                        <td>{{ auction.status }}</td>
+                        <td>
+                            {% if auction.winner %}
+                                {{ auction.winner.username }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <a href="{% url 'admin_auction_detail' auction.id %}" class="btn">View</a>
+
+                            {% if not auction.has_ended %}
+                                {% if auction.is_approved %}
+                                    <form method="post" action="{% url 'disable_auction' auction.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn danger">Disable</button>
+                                    </form>
+                                {% else %}
+                                    <form method="post" action="{% url 'approve_auction' auction.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn success">Approve</button>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+
+                            <form method="post" action="{% url 'delete_auction_admin' auction.id %}">
+                                {% csrf_token %}
+                                <button class="btn danger"
+                                    onclick="return confirm('Delete this auction?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6">No auctions found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+    </main>
 </div>
 
-<h2>Auctions</h2>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburgerMenu = document.getElementById('hamburger-menu');
+    const sidebar = document.getElementById('sidebar');
 
-<table class="admin-table">
-    <tr>
-        <th>Title</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
+    hamburgerMenu.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+        hamburgerMenu.classList.toggle('active');
+    });
 
-    {% for auction in auctions %}
-    <tr>
-        <td>{{ auction.title }}</td>
-        <td>
-            {% if auction.is_active %}
-                Active
-            {% else %}
-                Disabled
-            {% endif %}
-        </td>
-        <td>
-            {% if auction.is_active %}
-                <a href="{% url 'disable_auction' auction.id %}" class="btn disable">
-                    Disable
-                </a>
-            {% else %}
-                <a href="{% url 'approve_auction' auction.id %}" class="btn approve">
-                    Approve
-                </a>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+
+    document.addEventListener('click', function(event) {
+        if (!sidebar.contains(event.target) && !hamburgerMenu.contains(event.target)) {
+            sidebar.classList.remove('active');
+            hamburgerMenu.classList.remove('active');
+        }
+    });
+
+   
+    function updateCountdowns() {
+        const timers = document.querySelectorAll('.countdown-timer');
+
+        timers.forEach(timer => {
+            const type = timer.getAttribute('data-type');
+            const now = new Date().getTime();
+
+            if (type === 'upcoming') {
+                const startTime = new Date(timer.getAttribute('data-start')).getTime();
+                const timeUntilStart = startTime - now;
+
+                if (timeUntilStart > 0) {
+                    const days = Math.floor(timeUntilStart / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeUntilStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeUntilStart % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeUntilStart % (1000 * 60)) / 1000);
+
+                    let timeString = '';
+                    if (days > 0) {
+                        timeString = `${days}d ${hours}h ${minutes}m`;
+                    } else if (hours > 0) {
+                        timeString = `${hours}h ${minutes}m ${seconds}s`;
+                    } else if (minutes > 0) {
+                        timeString = `${minutes}m ${seconds}s`;
+                    } else {
+                        timeString = `${seconds}s`;
+                    }
+
+                    timer.textContent = timeString;
+                    timer.classList.remove('expired');
+                } else {
+                    timer.textContent = 'Starting Soon';
+                    timer.classList.add('expired');
+                }
+            } else {
+                const endTime = new Date(timer.getAttribute('data-end')).getTime();
+                const timeLeft = endTime - now;
+
+                if (timeLeft > 0) {
+                    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                    let timeString = '';
+                    if (days > 0) {
+                        timeString = `${days}d ${hours}h ${minutes}m`;
+                    } else if (hours > 0) {
+                        timeString = `${hours}h ${minutes}m ${seconds}s`;
+                    } else if (minutes > 0) {
+                        timeString = `${minutes}m ${seconds}s`;
+                    } else {
+                        timeString = `${seconds}s`;
+                    }
+
+                    timer.textContent = timeString;
+                    timer.classList.remove('expired');
+                } else {
+                    timer.textContent = 'Ended';
+                    timer.classList.add('expired');
+                }
+            }
+        });
+    }
+
+ 
+    updateCountdowns();
+    setInterval(updateCountdowns, 1000);
+});
+</script>
 
 {% endblock %}
-
